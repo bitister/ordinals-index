@@ -8,7 +8,7 @@ type DoMain struct {
 	ContentLength uint64 `orm:"description(字符长度)" form:"content_length" json:"content_length"`
 	Type          string `orm:"size(10);description(类型)" form:"type" json:"type"`
 	Owner         string `orm:"size(62);description(所有者地址)" form:"owner" json:"owner"`
-	Ctime         uint64 `orm:"description(铭刻时间)" form:"ctime" json:"ctime"`
+	Ctime         int64  `orm:"description(铭刻时间)" form:"ctime" json:"ctime"`
 }
 
 func (a *DoMain) TableName() string {

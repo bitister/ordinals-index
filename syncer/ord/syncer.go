@@ -255,7 +255,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 	}
 
 	owner := info["address"].(string)
-	ctime := info["timestamp"].(uint64)
+	ctime := info["timestamp"].(int64)
 
 	domain := models.DoMain{Name: content}
 	if err := s.session.Read(&domain, "name"); err != nil && err != orm.ErrNoRows {
