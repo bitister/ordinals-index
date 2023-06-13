@@ -154,7 +154,6 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 			domainParser := parser.NameDomainParser{}
 			data, valid, err := domainParser.Parse(body)
 			if err != nil || !valid {
-				beego.Error("err:", err.Error())
 				beego.Error("valid:", valid)
 				beego.Info("body:", string(body))
 
