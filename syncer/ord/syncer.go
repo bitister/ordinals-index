@@ -242,7 +242,7 @@ func (s *Syncer) processResult(result *result) error {
 
 func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interface{}) error {
 	content := info["content"].(string)
-	value := info["content"].(uint64)
+	value := info["output_value"].(uint64)
 	inscription_id := info["id"].(string)
 	content_length := info["content_length"].(uint64)
 	contents := strings.Split("content", ".")
