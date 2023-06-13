@@ -168,6 +168,10 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
+			if len(names[1]) > 10 {
+				return nil
+			}
+
 			if strings.ContainsAny(string(body), " \n") {
 				return nil
 			}
