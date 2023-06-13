@@ -117,6 +117,8 @@ func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error
 			details[key] = v
 		case "content_type":
 			details[key] = value
+		case "address":
+			details[key] = value
 		default:
 			details[key] = value
 		}

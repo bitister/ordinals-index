@@ -241,6 +241,15 @@ func (s *Syncer) processResult(result *result) error {
 }
 
 func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interface{}) error {
+	defer func() {
+		if err := recover(); err != nil {
+			// 处理panic
+			return
+		}
+	}()
+
+	beego.Info("info:", info)
+
 	content := info["content"].(string)
 	value := info["output_value"].(uint64)
 	inscription_id := info["id"].(string)
