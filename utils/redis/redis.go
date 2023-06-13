@@ -10,10 +10,11 @@ import (
 // redis数据超时时间
 const Timeout = 3 * time.Second
 
-//var Client *redis.ClusterClient
+// var Client *redis.ClusterClient
 var Client *redis.Client
 
 func init() {
+	beego.LoadAppConfig("ini", "../conf/app.conf")
 	path := beego.AppConfig.String("redis::url")
 	passwd := beego.AppConfig.String("redis::password")
 	db, _ := beego.AppConfig.Int("redis::db")
@@ -31,35 +32,35 @@ func init() {
 	}
 }
 
-//插入缓存
+// 插入缓存
 func RedisSet(key string, value interface{}, time time.Duration) (string, error) {
 	s, e := Client.Set(key, value, time).Result()
 	beego.Info(s, e, key)
 	return s, e
 }
 
-//查询缓存
+// 查询缓存
 func RedisGet(key string) *redis.StringCmd {
 	return Client.Get(key)
 }
 
-//查询缓存
+// 查询缓存
 func RedisDel(key string) *redis.IntCmd {
 	return Client.Del(key)
 }
 
-//从列表的右边删除第一个数据，并返回删除的数据
+// 从列表的右边删除第一个数据，并返回删除的数据
 func RedisRpop(key string) *redis.StringCmd {
 	return Client.RPop(key)
 }
 
-//插入list
+// 插入list
 func RedisLpush(key string, value interface{}, time time.Duration) (int64, error) {
 	s, e := Client.LPush(key, value, time).Result()
 	return s, e
 }
 
-//获取list
+// 获取list
 func RedisLRange(key string, start, end int64) ([]string, error) {
 	s, e := Client.LRange(key, start, end).Result()
 	return s, e

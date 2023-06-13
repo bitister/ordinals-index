@@ -9,7 +9,6 @@ import (
 
 // 初始化数据连接
 func init() {
-
 	beego.LoadAppConfig("ini", "../conf/app.conf")
 	//读取配置文件，设置数据库参数
 	//数据库类别
