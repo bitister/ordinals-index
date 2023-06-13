@@ -26,10 +26,10 @@ func (w *Worker) Start() {
 	for {
 		select {
 		case uid := <-w.uidChan:
-			beego.Debug("[worker %d]: processing inscription %s", w.wid, uid)
+			beego.Debug("[worker]: processing inscription:", w.wid, uid)
 			w.resultChan <- w.processInscription(uid)
 		case <-w.stopC:
-			beego.Debug("[worker %d]: stopping", w.wid)
+			beego.Debug("[worker]: stopping", w.wid)
 			return
 		}
 	}
@@ -44,6 +44,7 @@ func (w *Worker) processInscription(uid string) *result {
 	// FIXME: inscription_id is not always available
 	inscriptionID, ok := info["inscription_id"].(int64)
 	if !ok {
+		beego.Error("info[inscription_id]:", info["inscription_id"])
 		if err == nil {
 			err = fmt.Errorf("failed to get inscription_id")
 		}
@@ -56,7 +57,7 @@ func (w *Worker) processInscription(uid string) *result {
 
 func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error) {
 	inscriptionURL, _ := url.JoinPath(w.baseURL, "inscription", uid)
-	beego.Info("[worker %d] fetching %s...", w.wid, inscriptionURL)
+	beego.Info("[worker ] fetching ...", w.wid, inscriptionURL)
 	resp, err := utils.HttpGetResp(inscriptionURL)
 	if err != nil {
 		return nil, err
@@ -70,7 +71,7 @@ func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error
 
 	details := make(map[string]interface{})
 	inscriptionIDText := doc.Find("h1").First().Text()
-	beego.Info("inscriptionIDText %s", inscriptionIDText)
+	beego.Info("inscriptionIDText:", inscriptionIDText)
 	if strings.Contains(inscriptionIDText, "unstable") {
 		details["inscription_id"] = -1
 	} else {
@@ -148,7 +149,7 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 	content_type := info["content_type"].(string)
 
 	if validateContentType(content_type) {
-		beego.Info("content_type NameDomain")
+		beego.Info("content_type NameDomain:", content_type)
 		if json.Valid(body) {
 			domainParser := parser.NameDomainParser{}
 			data, valid, err := domainParser.Parse(body)

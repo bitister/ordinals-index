@@ -121,13 +121,13 @@ func (s *Syncer) receveResult() {
 	for {
 		select {
 		case lastInscriptionId = <-s.lastInscriptionIdChan:
-			beego.Info("received lastInscriptionId: %d", lastInscriptionId)
+			beego.Info("received lastInscriptionId:", lastInscriptionId)
 		case result := <-s.resultChan:
 			results[result.inscriptionUid] = result
-			beego.Info("received result for inscription %d", result.inscriptionId)
+			beego.Info("received result for inscription:", result.inscriptionId)
 			resultCount++
 		case insUids = <-s.processChan:
-			beego.Info("receiving %d inscriptions", len(insUids))
+			beego.Info("receiving ", len(insUids), " inscriptions")
 		case <-s.stopC:
 			beego.Info("stopping result processor")
 			return
@@ -196,12 +196,12 @@ func (s *Syncer) processResults(resultsInOrder []*result, lastInscriptionId int6
 			continue
 		}
 		if result.err != nil {
-			beego.Error("failed to processResults: %v", result.err)
+			beego.Error("failed to processResults:", result.err)
 			return count, result.err
 		}
 		err := s.processResult(result)
 		if err != nil {
-			beego.Error("failed to processResult: %v", result.err)
+			beego.Error("failed to processResult:", result.err)
 			return count, err
 		}
 		beego.Info("processed inscription %d", result.inscriptionId)
@@ -374,12 +374,12 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 func (s *Syncer) getLastInscriptionId() (int64, error) {
 	lastInscriptionId, err := s.readLastInscriptionId()
 	if err == nil {
-		beego.Info("get lastInscriptionId from file: %d", lastInscriptionId)
+		beego.Info("get lastInscriptionId from file:", lastInscriptionId)
 		return lastInscriptionId, nil
 	}
 
 	lastInscriptionId = s.InscriptionIdStart
-	beego.Info("get lastInscriptionId from config: %d", lastInscriptionId)
+	beego.Info("get lastInscriptionId from config:", lastInscriptionId)
 	return lastInscriptionId, nil
 }
 
@@ -415,10 +415,11 @@ func (s *Syncer) parseInscriptions(inscriptionURL string) (string, error) {
 			return
 		}
 
-		beego.Info("uid %s", uid)
 		// record the inscription uids, so that we can process them in order
 		insUids = append(insUids, uid)
 	})
+
+	beego.Info("insUids:", insUids)
 
 	s.processChan <- insUids
 	for _, insUid := range insUids {
