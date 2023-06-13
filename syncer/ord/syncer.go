@@ -124,7 +124,7 @@ func (s *Syncer) receveResult() {
 			beego.Info("received lastInscriptionId:", lastInscriptionId)
 		case result := <-s.resultChan:
 			results[result.inscriptionUid] = result
-			beego.Info("received result for inscription:", result.inscriptionId)
+
 			resultCount++
 		case insUids = <-s.processChan:
 			beego.Info("receiving ", len(insUids), " inscriptions")
@@ -139,7 +139,6 @@ func (s *Syncer) receveResult() {
 				resultsInOrder := make([]*result, len(insUids))
 				for i := 0; i < len(insUids); i++ {
 					resultsInOrder[i] = results[insUids[len(insUids)-i-1]]
-					beego.Info("resultsInOrder:", resultsInOrder[i])
 				}
 				if len(resultsInOrder) != len(insUids) {
 					err = fmt.Errorf("resultsInOrder length %d != insUids length %d", len(resultsInOrder), len(insUids))
@@ -204,7 +203,7 @@ func (s *Syncer) processResults(resultsInOrder []*result, lastInscriptionId int6
 			beego.Error("failed to processResult:", result.err)
 			return count, err
 		}
-		beego.Info("processed inscription %d", result.inscriptionId)
+
 		lastSuccessInscriptionId = result.inscriptionId
 		count++
 	}
@@ -241,7 +240,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 	//content := info["content"].([]byte)
 	// check if the collection exists
 
-	beego.Info("==============================content=================:", info)
+	beego.Error("==============================content=================:", info)
 	return nil
 }
 
