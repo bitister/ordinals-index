@@ -173,7 +173,18 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
-			info["content"] = body
+			content_length, ok := info["content_length"].(uint64)
+			if ok {
+				if content_length > 1024 {
+					return nil
+				}
+			} else {
+				if len(body) > 1024 {
+					return nil
+				}
+			}
+
+			info["content"] = string(body)
 			info["content_parser"] = parser.NameDomain
 		}
 	}
