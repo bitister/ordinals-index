@@ -74,7 +74,7 @@ func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error
 	inscriptionIDText := doc.Find("h1").First().Text()
 	beego.Info("inscriptionIDText:", inscriptionIDText)
 	if strings.Contains(inscriptionIDText, "unstable") {
-		details["inscription_id"] = -1
+		details["inscription_id"] = int64(-1)
 	} else {
 		inscriptionIDText = strings.Replace(inscriptionIDText, "Inscription ", "", -1)
 		// convert inscriptionID string to int64
