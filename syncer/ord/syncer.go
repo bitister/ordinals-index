@@ -1,7 +1,6 @@
 package ord
 
 import (
-	"encoding/hex"
 	"enum"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -239,10 +238,10 @@ func (s *Syncer) processResult(result *result) error {
 }
 
 func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interface{}) error {
-	content := info["content"].([]byte)
+	//content := info["content"].([]byte)
 	// check if the collection exists
 
-	beego.Info("==============================content=================:", hex.EncodeToString(content))
+	beego.Info("==============================content=================:", info)
 	return nil
 }
 
