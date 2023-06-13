@@ -173,6 +173,10 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
+			if len(names[1]) < 1 {
+				return nil
+			}
+
 			content_length, ok := info["content_length"].(uint64)
 			if ok {
 				if content_length > 1024 {
