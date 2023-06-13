@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"strings"
+	"github.com/astaxie/beego"
+	"syncer/ord"
 )
 
 func main() {
-	str := "hello\nworld how are you?"
-	index := strings.Index(str, " ")
-	if index == -1 {
-		index = strings.Index(str, "\n")
+	syncer, err := ord.NewSyncer()
+	if err != nil {
+		beego.Error("err:", err.Error())
+		return
 	}
-	if index != -1 {
-		str = str[0:index]
-	}
-	fmt.Println(str)
+
+	syncer.Run()
 }
