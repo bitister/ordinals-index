@@ -423,8 +423,6 @@ func (s *Syncer) parseInscriptions(inscriptionURL string) (string, error) {
 		insUids = append(insUids, uid)
 	})
 
-	beego.Info("insUids:", insUids)
-
 	s.processChan <- insUids
 	for _, insUid := range insUids {
 		s.inscriptionUidChan <- insUid

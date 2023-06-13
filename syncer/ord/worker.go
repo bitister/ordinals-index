@@ -26,7 +26,6 @@ func (w *Worker) Start() {
 	for {
 		select {
 		case uid := <-w.uidChan:
-			beego.Debug("[worker]: processing inscription:", w.wid, uid)
 			w.resultChan <- w.processInscription(uid)
 		case <-w.stopC:
 			beego.Debug("[worker]: stopping", w.wid)
@@ -45,20 +44,16 @@ func (w *Worker) processInscription(uid string) *result {
 	inscriptionID, ok := info["inscription_id"].(int64)
 	if !ok {
 		if err == nil {
-			beego.Error("info[inscription_id]:", info["inscription_id"])
-			beego.Error("============info=============:", info)
 			err = fmt.Errorf("failed to get inscription_id")
 		}
 		return &result{inscriptionUid: uid, inscriptionId: 0, info: info, err: err}
 	}
 
-	beego.Debug("[worker ] parsed inscription:", w.wid, inscriptionID)
 	return &result{inscriptionUid: uid, inscriptionId: inscriptionID, info: info, err: err}
 }
 
 func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error) {
 	inscriptionURL, _ := url.JoinPath(w.baseURL, "inscription", uid)
-	beego.Info("[worker ] fetching ...", w.wid, inscriptionURL)
 	resp, err := utils.HttpGetResp(inscriptionURL)
 	if err != nil {
 		return nil, err
@@ -135,7 +130,6 @@ func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error
 
 func (w *Worker) parseContent(info map[string]interface{}) error {
 	contentURL, _ := url.JoinPath(w.baseURL, "content", info["id"].(string))
-	beego.Info("[worker %d] fetching %s...", w.wid, contentURL)
 	resp, err := utils.HttpGetResp(contentURL)
 	if err != nil {
 		return err
@@ -173,7 +167,7 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
-			if len(names[1]) < 1 {
+			if strings.ContainsAny(string(body), " \n") {
 				return nil
 			}
 
