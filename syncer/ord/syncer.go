@@ -246,7 +246,14 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 	inscription_id := info["id"].(string)
 	content_length := info["content_length"].(uint64)
 	contents := strings.Split("content", ".")
-	content_type := contents[1]
+
+	var content_type string
+	if len(contents) == 2 {
+		content_type = contents[1]
+	} else {
+		content_type = contents[0]
+	}
+
 	owner := info["address"].(string)
 	ctime := info["timestamp"].(uint64)
 
