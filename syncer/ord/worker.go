@@ -44,14 +44,15 @@ func (w *Worker) processInscription(uid string) *result {
 	// FIXME: inscription_id is not always available
 	inscriptionID, ok := info["inscription_id"].(int64)
 	if !ok {
-		beego.Error("info[inscription_id]:", info["inscription_id"])
 		if err == nil {
+			beego.Error("info[inscription_id]:", info["inscription_id"])
+			beego.Error("============info=============:", info)
 			err = fmt.Errorf("failed to get inscription_id")
 		}
 		return &result{inscriptionUid: uid, inscriptionId: 0, info: info, err: err}
 	}
 
-	beego.Debug("[worker %d] parsed inscription %d", w.wid, inscriptionID)
+	beego.Debug("[worker ] parsed inscription:", w.wid, inscriptionID)
 	return &result{inscriptionUid: uid, inscriptionId: inscriptionID, info: info, err: err}
 }
 
@@ -149,13 +150,13 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 	content_type := info["content_type"].(string)
 
 	if validateContentType(content_type) {
-		beego.Info("content_type NameDomain:", content_type)
 		if json.Valid(body) {
 			domainParser := parser.NameDomainParser{}
 			data, valid, err := domainParser.Parse(body)
 			if err != nil || !valid {
 				beego.Error("err:", err.Error())
 				beego.Error("valid:", valid)
+				beego.Info("body:", string(body))
 
 				return nil
 			}
