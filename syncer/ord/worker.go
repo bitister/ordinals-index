@@ -145,8 +145,9 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 		return err
 	}
 
-	switch info["content_type"].(string) {
-	case parser.NameDomain:
+	content_type := info["content_type"].(string)
+
+	if validateContentType(content_type) {
 		beego.Info("content_type NameDomain")
 		if json.Valid(body) {
 			domainParser := parser.NameDomainParser{}
@@ -166,10 +167,16 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
+			names := strings.Split(string(body), ".")
+			if len(names) != 2 {
+				return nil
+			}
+
 			info["content"] = body
 			info["content_parser"] = parser.NameDomain
 		}
 	}
+
 	//var found bool
 	//for _, p := range parser.ParserList() {
 	//	data, valid, err := p.Parse(body)
@@ -189,4 +196,16 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 	//	info["content_parser"] = "raw"
 	//}
 	return nil
+}
+
+func validateContentType(data string) bool {
+	if strings.Contains(data, "text/plain") {
+		return true
+	}
+
+	if strings.Contains(data, "application/json") {
+		return true
+	}
+
+	return false
 }

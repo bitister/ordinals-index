@@ -50,5 +50,10 @@ func (p *NameDomainParser) Parse(data []byte) (interface{}, bool, error) {
 		return nil, false, nil
 	}
 
+	names := strings.Split(mint.Name, ".")
+	if len(names) != 2 {
+		return nil, false, nil
+	}
+
 	return strings.ToLower(mint.Name), mint.Validate(), nil
 }

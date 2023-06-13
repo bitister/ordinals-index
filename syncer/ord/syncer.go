@@ -233,60 +233,10 @@ func (s *Syncer) processResult(result *result) error {
 }
 
 func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interface{}) error {
-	o := info["content"].(*parser.BRC721Mint)
+	content := info["content"].(*parser.BRC721Mint)
 	// check if the collection exists
-	collection, err := s.collectionUc.GetCollectionByTick(context.Background(), biz.ProtocolTypeBRC721, o.Tick)
-	if err != nil {
-		return err
-	}
-	if collection == nil {
-		s.logger.Infof("collection %s not found, ignore inscription %d", o.Tick, inscriptionId)
-		return nil
-	}
-	if collection.InscriptionID >= inscriptionId {
-		s.logger.Warnf("collection %s inscriptionId %d is greater than %d, ignore inscription %d", o.Tick, collection.InscriptionID, inscriptionId, inscriptionId)
-		return nil
-	}
-	s.logger.Debugf("collection: %+v", collection)
-	// check if supply is full
-	if collection.Supply >= collection.Max {
-		s.logger.Infof("collection %s supply is full, ignore inscription %d", o.Tick, inscriptionId)
-		return nil
-	}
-	t, err := s.tokenUc.FindByInscriptionID(context.Background(), inscriptionId)
-	if err != nil {
-		return err
-	}
-	if len(t) > 0 {
-		s.logger.Infof("token with inscription %d already processed, ignore", inscriptionId)
-		return nil
-	}
-	// create token
-	token := &biz.Token{
-		Tick:           o.Tick,
-		P:              biz.ProtocolTypeBRC721,
-		TokenID:        collection.Supply + 1,
-		TxHash:         info["genesis_transaction"].(string),
-		BlockHeight:    info["genesis_height"].(uint64),
-		BlockTime:      info["timestamp"].(time.Time),
-		Address:        info["address"].(string),
-		InscriptionID:  inscriptionId,
-		InscriptionUID: info["uid"].(string),
-		CollectionID:   collection.ID,
-	}
-	token, err = s.tokenUc.CreateToken(context.Background(), token)
-	if err != nil {
-		s.logger.Errorf("failed to create token: %T: %v", err, err)
-		return err
-	}
-	s.logger.Infof("created token %d for inscription %d", token.TokenID, inscriptionId)
 
-	collection.Supply++
-	collection, err = s.collectionUc.UpdateCollection(context.Background(), collection)
-	if err != nil {
-		return err
-	}
-	s.logger.Infof("updated collection %s supply to %d", o.Tick, collection.Supply)
+	beego.Info("content:", content)
 	return nil
 }
 
