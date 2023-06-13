@@ -245,7 +245,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 	value := info["output_value"].(uint64)
 	inscription_id := info["id"].(string)
 	content_length := info["content_length"].(uint64)
-	contents := strings.Split("content", ".")
+	contents := strings.Split(content, ".")
 
 	var content_type string
 	if len(contents) == 2 {
