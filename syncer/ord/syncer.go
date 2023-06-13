@@ -139,7 +139,7 @@ func (s *Syncer) receveResult() {
 				resultsInOrder := make([]*result, len(insUids))
 				for i := 0; i < len(insUids); i++ {
 					resultsInOrder[i] = results[insUids[len(insUids)-i-1]]
-					beego.Info("resultsInOrder: %v", resultsInOrder[i])
+					beego.Info("resultsInOrder:", resultsInOrder[i])
 				}
 				if len(resultsInOrder) != len(insUids) {
 					err = fmt.Errorf("resultsInOrder length %d != insUids length %d", len(resultsInOrder), len(insUids))
@@ -221,7 +221,12 @@ func (s *Syncer) processResults(resultsInOrder []*result, lastInscriptionId int6
 func (s *Syncer) processResult(result *result) error {
 	inscriptionId := result.inscriptionId
 	info := result.info
-	switch info["content_parser"].(string) {
+	content_parser, ok := info["content_parser"].(string)
+	if !ok {
+		return nil
+	}
+
+	switch content_parser {
 	case parser.NameDomain:
 		err := s.processDomainMint(inscriptionId, info)
 		if err != nil {
