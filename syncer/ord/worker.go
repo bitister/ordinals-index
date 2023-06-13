@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"syncer/ord/parser"
-	"time"
 	"utils"
 )
 
@@ -103,7 +102,8 @@ func (w *Worker) parseInscriptionInfo(uid string) (map[string]interface{}, error
 			details[key] = v
 		case "timestamp":
 			// convert "2023-05-28 03:28:17 UTC" to time.Time
-			v, _ := time.Parse("2006-01-02 15:04:05 UTC", value)
+			//v, _ := time.Parse("2006-01-02 15:04:05 UTC", value)
+			v, _ := strconv.ParseUint(value, 10, 64)
 			details[key] = v
 		case "genesis_height":
 			v, _ := strconv.ParseUint(value, 10, 64)

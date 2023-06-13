@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"models"
 	"net/url"
 	"os"
 	"os/signal"
@@ -41,6 +43,7 @@ type Syncer struct {
 	eventChan             chan Event
 	stopC                 chan struct{}
 	lastInscriptionIdChan chan int64
+	session               orm.Ormer
 }
 
 var lastInscriptionIdFile = int64(0)
@@ -52,6 +55,7 @@ func NewSyncer() (*Syncer, error) {
 
 	syncer := &Syncer{Concurrency: concurrency}
 
+	syncer.session = orm.NewOrm()
 	syncer.InscriptionIdStart = inscription_id_start
 	syncer.baseURL = baseURL
 	syncer.inscriptionUidChan = make(chan string, concurrency)
@@ -237,10 +241,40 @@ func (s *Syncer) processResult(result *result) error {
 }
 
 func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interface{}) error {
-	//content := info["content"].([]byte)
-	// check if the collection exists
+	content := info["content"].(string)
+	value := info["content"].(uint64)
+	inscription_id := info["id"].(string)
+	content_length := info["content_length"].(uint64)
+	contents := strings.Split("content", ".")
+	content_type := contents[1]
+	owner := info["address"].(string)
+	ctime := info["timestamp"].(uint64)
 
-	beego.Error("==============================content=================:", info)
+	domain := models.DoMain{Name: content}
+	if err := s.session.Read(&domain, "name"); err != nil && err != orm.ErrNoRows {
+		beego.Error("session Read err:", err.Error())
+
+		return err
+	} else if err != nil && err == orm.ErrNoRows {
+		domain.Id = inscriptionId
+		domain.Name = content
+		domain.InscriptionId = inscription_id
+		domain.ContentLength = content_length
+		domain.Type = content_type
+		domain.Owner = owner
+		domain.Ctime = ctime
+		domain.Value = value
+
+		if _, err := s.session.Insert(&domain); err != nil {
+			beego.Error("session Insert err:", err.Error())
+
+			return err
+		}
+	} else {
+		beego.Info("content:", content)
+		beego.Info("inscription_id:", inscription_id)
+	}
+
 	return nil
 }
 
