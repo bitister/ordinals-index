@@ -144,10 +144,6 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 		return err
 	}
 
-	if info["content_type"] == nil {
-		return nil
-	}
-
 	content_type, ok := info["content_type"].(string)
 	if !ok {
 		return nil
