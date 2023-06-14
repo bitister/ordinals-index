@@ -284,7 +284,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 		if _, err := s.session.Insert(&domain); err != nil {
 			beego.Error("session Insert err:", err.Error())
 
-			return err
+			return nil
 		}
 	} else {
 		beego.Info("content:", content)
