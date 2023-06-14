@@ -88,9 +88,7 @@ func (c *Domain) Query() {
 
 	orderType, ok := inputData["orderType"].(int)
 	if !ok {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "orderType参数错误")
-		c.ServeJSON()
-		return
+		orderType = 0
 	}
 
 	startWith, ok := inputData["startWith"].(string)
@@ -109,31 +107,27 @@ func (c *Domain) Query() {
 
 	minWidth, ok := inputData["minWidth"].(int)
 	if !ok {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "minWidth参数错误")
-		c.ServeJSON()
-		return
+		minWidth = 0
 	}
 
 	maxWidth, ok := inputData["maxWidth"].(int)
 	if !ok {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "maxWidth参数错误")
-		c.ServeJSON()
-		return
+		maxWidth = 0
 	}
 
-	notLike, ok := inputData["notLike"].(int)
+	notLike, ok := inputData["notLike"].(string)
 	if !ok {
 		c.Data["json"] = c.Fail(c.Tr("参数错误"), "notLike参数错误")
 		c.ServeJSON()
 		return
 	}
 
-	wordsType, ok := inputData["wordsType"].(int)
-	if !ok {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "wordsType参数错误")
-		c.ServeJSON()
-		return
-	}
+	//wordsType, ok := inputData["wordsType"].(int)
+	//if !ok {
+	//	c.Data["json"] = c.Fail(c.Tr("参数错误"), "wordsType参数错误")
+	//	c.ServeJSON()
+	//	return
+	//}
 
 	valid := validation.Validation{}
 	// 2.验证获取到的数据
@@ -162,7 +156,7 @@ func (c *Domain) Query() {
 	beego.Info("typeLists:", typeLists)
 	qs := session.QueryTable(models.DoMainTBName())
 	if name != "" {
-		qs = qs.Filter("name__icontains", name)
+		qs = qs.Filter("content__icontains", name)
 	}
 
 	if typeLists != nil {
@@ -170,11 +164,62 @@ func (c *Domain) Query() {
 	}
 
 	if startWith != "" {
-		qs = qs.Filter("name__istartswith", startWith)
+		qs = qs.Filter("content__istartswith", startWith)
 	}
 
 	if endWith != "" {
-		qs = qs.Filter("name__iendswith", endWith)
+		qs = qs.Filter("content__iendswith", endWith)
+	}
+
+	if minWidth != 0 {
+		qs = qs.Filter("content__len__gte", minWidth)
+	}
+
+	if maxWidth != 0 {
+		qs = qs.Filter("content__len__lte", maxWidth)
+	}
+
+	if notLike != "" {
+		qs = qs.Filter("content__icontains", notLike)
+	}
+
+	totalCount, err := qs.Count()
+	if err != nil {
+		beego.Error(err)
+		c.Data["json"] = c.Fail(c.Tr("服务异常请重试"), nil)
+		c.ServeJSON()
+	}
+
+	//orderType 选填  int 排序方式(0:铭文序号倒序 1：铭文需要升序 2：字母升序 3：字母降序 4：铭文余额升序 5: 铭文余额降序 6: 最短字符)
+	if orderType == 1 {
+		qs = qs.OrderBy("id")
+	} else if orderType == 2 {
+		qs = qs.OrderBy("content")
+	} else if orderType == 3 {
+		qs = qs.OrderBy("-content")
+	} else if orderType == 4 {
+		qs = qs.OrderBy("value")
+	} else if orderType == 5 {
+		qs = qs.OrderBy("-value")
+	} else if orderType == 6 {
+		qs = qs.OrderBy("length(content)")
+	} else {
+		qs = qs.OrderBy("-id")
+	}
+
+	domains := make([]models.DoMain, 0)
+	if _, err := qs.Limit(pageSize, (pageNum-1)*pageSize).All(&domains); err != nil {
+		beego.Error(err)
+		c.Data["json"] = c.Fail(c.Tr("服务异常请重试"), nil)
+		c.ServeJSON()
+	}
+
+	outData := struct {
+		TotalCount    int64
+		ProfitDetails []models.DoMain
+	}{
+		totalCount,
+		domains,
 	}
 
 	c.Data["json"] = c.Succ(c.Tr("查询成功"), outData)
