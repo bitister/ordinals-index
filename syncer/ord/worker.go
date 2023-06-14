@@ -144,7 +144,14 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 		return err
 	}
 
-	content_type := info["content_type"].(string)
+	if info["content_type"] == nil {
+		return nil
+	}
+
+	content_type, ok := info["content_type"].(string)
+	if !ok {
+		return nil
+	}
 
 	if validateContentType(content_type) {
 		if json.Valid(body) {
