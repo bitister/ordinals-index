@@ -95,7 +95,7 @@ func (c *Domain) Query() {
 
 	page, ok := inputData["pageNum"].(float64)
 	if !ok {
-		beego.Info("==pageNum==", pageNum)
+		beego.Info("==pageNum==", page)
 		page = 1
 	}
 
@@ -103,10 +103,10 @@ func (c *Domain) Query() {
 
 	size, ok := inputData["pageSize"].(float64)
 	if !ok {
-		beego.Info("==pageSize==", pageSize)
+		beego.Info("==pageSize==", size)
 		size = 100
 	}
-	beego.Info("pageSize:", pageSize)
+	beego.Info("pageSize:", size)
 
 	pageSize := int(size)
 
