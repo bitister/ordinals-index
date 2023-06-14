@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
+	"models"
 )
 
 type Domain struct {
@@ -70,12 +72,12 @@ func (c *Domain) Query() {
 		pageSize = 100
 	}
 
-	category, ok := inputData["category"].(string)
-	if !ok {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "category参数错误")
-		c.ServeJSON()
-		return
-	}
+	//category, ok := inputData["category"].(string)
+	//if !ok {
+	//	c.Data["json"] = c.Fail(c.Tr("参数错误"), "category参数错误")
+	//	c.ServeJSON()
+	//	return
+	//}
 
 	typeList, ok := inputData["typeList"].(string)
 	if !ok {
@@ -149,6 +151,31 @@ func (c *Domain) Query() {
 	}
 
 	session := c.O
+
+	var typeLists []string
+	if err := json.Unmarshal([]byte(typeList), &typeLists); err != nil {
+		c.Data["json"] = c.Fail(c.Tr("参数错误"), "typeList参数错误")
+		c.ServeJSON()
+		return
+	}
+
+	beego.Info("typeLists:", typeLists)
+	qs := session.QueryTable(models.DoMainTBName())
+	if name != "" {
+		qs = qs.Filter("name__icontains", name)
+	}
+
+	if typeLists != nil {
+		qs = qs.Filter("type__in", typeLists)
+	}
+
+	if startWith != "" {
+		qs = qs.Filter("name__istartswith", startWith)
+	}
+
+	if endWith != "" {
+		qs = qs.Filter("name__iendswith", endWith)
+	}
 
 	c.Data["json"] = c.Succ(c.Tr("查询成功"), outData)
 	c.ServeJSON()

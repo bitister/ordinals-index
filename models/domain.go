@@ -6,6 +6,7 @@ type DoMain struct {
 	InscriptionId string `orm:"size(66);description(序列id)" form:"inscription_id" json:"inscription_id"`
 	Value         uint64 `orm:"description(铭文余额)" form:"value" json:"value"`
 	ContentLength uint64 `orm:"description(字符长度)" form:"content_length" json:"content_length"`
+	Content       string `orm:"size(255);description(内容)" form:"content" json:"content"`
 	Type          string `orm:"size(10);description(类型)" form:"type" json:"type"`
 	Owner         string `orm:"size(62);description(所有者地址)" form:"owner" json:"owner"`
 	Ctime         int64  `orm:"description(铭刻时间)" form:"ctime" json:"ctime"`

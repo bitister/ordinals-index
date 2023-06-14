@@ -276,6 +276,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 		domain.Name = content
 		domain.InscriptionId = inscription_id
 		domain.ContentLength = content_length
+		domain.Content = contents[0]
 		domain.Type = content_type
 		domain.Owner = owner
 		domain.Ctime = ctime
