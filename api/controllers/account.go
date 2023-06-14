@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/validation"
 	"models"
 )
 
@@ -129,20 +128,20 @@ func (c *Domain) Query() {
 	//	return
 	//}
 
-	valid := validation.Validation{}
-	// 2.验证获取到的数据
-	valid.Numeric(minWidth, "minWidth")
-	valid.Numeric(maxWidth, "maxWidth")
-	valid.Max(orderType, 6, "orderType")
-
-	// 3.判断有没有错误
-	if valid.HasErrors() { // 说明有错误
-		for _, err := range valid.Errors { // 循环打印错误
-			c.Data["json"] = c.Fail(c.Tr("参数错误"), err.Key)
-			c.ServeJSON()
-			return
-		}
-	}
+	//valid := validation.Validation{}
+	//// 2.验证获取到的数据
+	//valid.Numeric(minWidth, "minWidth")
+	//valid.Numeric(maxWidth, "maxWidth")
+	//valid.Max(orderType, 6, "orderType")
+	//
+	//// 3.判断有没有错误
+	//if valid.HasErrors() { // 说明有错误
+	//	for _, err := range valid.Errors { // 循环打印错误
+	//		c.Data["json"] = c.Fail(c.Tr("参数错误"), err.Key)
+	//		c.ServeJSON()
+	//		return
+	//	}
+	//}
 
 	session := c.O
 
