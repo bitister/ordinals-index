@@ -265,6 +265,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 
 	owner := info["address"].(string)
 	ctime := info["timestamp"].(int64)
+	content_data := info["content_data"].(string)
 
 	domain := models.DoMain{Name: content}
 	if err := s.session.Read(&domain, "name"); err != nil && err != orm.ErrNoRows {
@@ -281,6 +282,7 @@ func (s *Syncer) processDomainMint(inscriptionId int64, info map[string]interfac
 		domain.Owner = owner
 		domain.Ctime = ctime
 		domain.Value = value
+		domain.ContentData = content_data
 
 		if _, err := s.session.Insert(&domain); err != nil {
 			beego.Error("session Insert err:", err.Error())

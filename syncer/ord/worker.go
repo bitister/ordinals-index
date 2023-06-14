@@ -160,6 +160,7 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				return nil
 			}
 
+			info["content_data"] = string(body)
 			info["content"] = data
 			info["content_parser"] = domainParser.Name()
 		} else {
@@ -192,6 +193,7 @@ func (w *Worker) parseContent(info map[string]interface{}) error {
 				}
 			}
 
+			info["content_data"] = string(body)
 			info["content"] = string(body)
 			info["content_parser"] = parser.NameDomain
 		}
