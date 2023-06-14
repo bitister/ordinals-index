@@ -79,7 +79,7 @@ func (c *Domain) Query() {
 	//	return
 	//}
 
-	typeList, ok := inputData["typeList"].(string)
+	typeList, ok := inputData["typeList"].([]interface{})
 	if !ok {
 		c.Data["json"] = c.Fail(c.Tr("参数错误"), "typeList参数错误")
 		c.ServeJSON()
@@ -147,10 +147,8 @@ func (c *Domain) Query() {
 	session := c.O
 
 	var typeLists []string
-	if err := json.Unmarshal([]byte(typeList), &typeLists); err != nil {
-		c.Data["json"] = c.Fail(c.Tr("参数错误"), "typeList参数错误")
-		c.ServeJSON()
-		return
+	for _, tl := range typeList {
+		typeLists = append(typeLists, tl.(string))
 	}
 
 	beego.Info("typeLists:", typeLists)
